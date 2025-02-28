@@ -37,6 +37,15 @@ spawn_time=2000
 
 clock=pg.time.Clock()
 
+# game over screen
+def game_over_screen(screen):
+    font=pg.font.Font(None,50)
+    text=font.render("Game Over!!!",True,(124,10,2))
+    width,height=screen.get_size()
+    screen.blit(text,(width-width//1.6,height-height//1.75))
+    pg.display.update()
+    pg.time.delay(5000)
+
 while True:
     for event in pg.event.get():
         if event.type==pg.QUIT:
@@ -89,7 +98,7 @@ while True:
 
     for enemy in enemies:
         if collisionDetection(enemy,danger_zone):
-            print("Game Over")
+            game_over_screen(screen)
             pg.quit()
             sys.exit()
 
