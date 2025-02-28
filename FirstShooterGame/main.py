@@ -4,6 +4,9 @@ import random as rdm
 
 pg.init()
 
+def collisionDetection(rect1,rect2):
+    return rect1.colliderect(rect2)
+
 # screen settings
 screen_width=800
 screen_height=600
@@ -16,7 +19,7 @@ player_width=25
 player_height=30
 player_x=screen_width//2-player_width//2
 player_y=screen_height-player_height-10
-player_speed=5
+player_speed=5.25
 
 # bullet settings
 bullet_width=2
@@ -27,7 +30,7 @@ bullets=[]
 # enemy settings
 enemy_width=25
 enemy_height=30
-enemy_speed=3
+enemy_speed=2.75
 enemies=[]
 enemy_timer=0
 spawn_time=2000
@@ -71,11 +74,30 @@ while True:
     for enemy in enemies:
         enemy.y+=enemy_speed
     
+    for bullet in bullets[:]:
+        for enemy in enemies[:]:
+            if collisionDetection(bullet,enemy):
+                bullets.remove(bullet)
+                enemies.remove(enemy)
+                break 
+    
     # remove out of screen enemies from list
     enemies=[enemy for enemy in enemies if enemy.y<screen_height] 
 
+    # dead zone
+    danger_zone=pg.Rect(0,player_y,screen_width,player_height)
+
+    for enemy in enemies:
+        if collisionDetection(enemy,danger_zone):
+            print("Game Over")
+            pg.quit()
+            sys.exit()
+
     # screen color
     screen.fill((0,0,0))
+
+    # draw dead zone
+    pg.draw.rect(screen,(124,10,2),danger_zone)
 
     # drwa player//in this case a rectangle
     pg.draw.rect(screen,(0,128,255),(player_x,player_y,player_width,player_height))
@@ -93,3 +115,6 @@ while True:
 
     # fps cap
     clock.tick(60)
+
+#    barn red (124,10,2)
+# british green (0,66,37)
