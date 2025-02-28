@@ -39,10 +39,10 @@ clock=pg.time.Clock()
 
 # game over screen
 def game_over_screen(screen):
-    font=pg.font.Font(None,50)
+    font=pg.font.Font(None,125)
     text=font.render("Game Over!!!",True,(124,10,2))
-    width,height=screen.get_size()
-    screen.blit(text,(width-width//1.6,height-height//1.75))
+    text_rect=text.get_rect(center=screen.get_rect().center)
+    screen.blit(text,text_rect.topleft)
     pg.display.update()
     pg.time.delay(5000)
 
