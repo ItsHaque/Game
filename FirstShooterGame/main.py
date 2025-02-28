@@ -39,24 +39,39 @@ clock=pg.time.Clock()
 
 # game over screen
 def game_over_screen(screen):
-    font=pg.font.Font(None,125)
-    text=font.render("Game Over!!!",True,(124,10,2))
-    text_rect=text.get_rect(center=screen.get_rect().center)
-    screen.blit(text,text_rect.topleft)
+    font1=pg.font.Font(None,125)
+    font2=pg.font.Font(None,25)
+    text1=font1.render("Game Over!!!",True,(124,10,2))
+    text2=font2.render("Press 'R' to Restart",True,(0,255,0))
+    text1_rect=text1.get_rect(center=screen.get_rect().center)
+    text2_rect=text2.get_rect(midtop=(text1_rect.centerx,text1_rect.bottom+10))
+    screen.blit(text1,text1_rect.topleft)
+    screen.blit(text2,text2_rect.bottomleft)
     pg.display.update()
-    pg.time.delay(5000)
+    while True:
+        for event in pg.event.get():
+            if event.type==pg.QUIT:
+                pg.quit()
+                sys.exit()
+            if event.type==pg.KEYDOWN and event.key==pg.K_r:
+                enemies.clear()
+                bullets.clear()
+                return
 
-while True:
+running=True
+
+while running:
     for event in pg.event.get():
         if event.type==pg.QUIT:
             pg.quit()
             sys.exit()
-        if event.type==pg.KEYDOWN and event.key==pg.K_SPACE:
-                # create bullet
-                bullet_x=player_x+player_width//2-bullet_width//2
-                bullet_y=player_y
-                bullets.append(pg.Rect(bullet_x,bullet_y,bullet_width,bullet_height))
-    
+        if event.type==pg.KEYDOWN:
+                if event.key==pg.K_SPACE:
+                    # create bullet
+                    bullet_x=player_x+player_width//2-bullet_width//2
+                    bullet_y=player_y
+                    bullets.append(pg.Rect(bullet_x,bullet_y,bullet_width,bullet_height))
+
     # player movement
     keys=pg.key.get_pressed()
     if keys[pg.K_LEFT] and player_x>0:
@@ -96,11 +111,9 @@ while True:
     # dead zone
     danger_zone=pg.Rect(0,player_y,screen_width,player_height)
 
-    for enemy in enemies:
+    for enemy in enemies[:]:
         if collisionDetection(enemy,danger_zone):
             game_over_screen(screen)
-            pg.quit()
-            sys.exit()
 
     # screen color
     screen.fill((0,0,0))
