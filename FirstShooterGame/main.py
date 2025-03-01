@@ -37,6 +37,7 @@ spawn_time=2000
 
 clock=pg.time.Clock()
 current_score=0
+best=0
 
 # game over screen
 def game_over_screen(screen):
@@ -68,8 +69,11 @@ def game_over_screen(screen):
 def score(screen):
     font=pg.font.Font(None,20)
     score=font.render(f'Score: {current_score}',True,(0,255,255))
-    place_score=score.get_rect(topright=screen.get_rect().topleft)
-    screen.blit(score,(place_score.x+60,place_score.y+5))
+    H_score=font.render(f'Best Score: {best}',True,(0,150,255))
+    place_score=score.get_rect(topleft=screen.get_rect().topleft)
+    place_h_score=H_score.get_rect(topright=screen.get_rect().topright)
+    screen.blit(score,(place_score.x+5,place_score.y+5))
+    screen.blit(H_score,(place_h_score.x-5,place_h_score.y+5))
     pg.display.update()
 
 running=True
@@ -118,6 +122,7 @@ while running:
                 bullets.remove(bullet)
                 enemies.remove(enemy)
                 current_score+=1
+                best=max(best,current_score)
                 break 
     
     # remove out of screen enemies from list
@@ -147,8 +152,9 @@ while running:
 
     # draw enemy
     for enemy in enemies:
-        pg.draw.rect(screen,(100,100,100),enemy)
+        pg.draw.rect(screen,(50,0,0),enemy)
     
+    # place scores
     score(screen)
 
     # update the screen
