@@ -36,18 +36,23 @@ enemy_timer=0
 spawn_time=2000
 
 clock=pg.time.Clock()
+current_score=0
 
 # game over screen
 def game_over_screen(screen):
+    # print(current_score)
     font1=pg.font.Font(None,125)
     font2=pg.font.Font(None,25)
-    text1=font1.render("Game Over!!!",True,(124,10,2))
-    text2=font2.render("Press 'R' to Restart",True,(0,255,0))
-    text1_rect=text1.get_rect(center=screen.get_rect().center)
-    text2_rect=text2.get_rect(midtop=(text1_rect.centerx,text1_rect.bottom+10))
-    screen.blit(text1,text1_rect.topleft)
-    screen.blit(text2,text2_rect.bottomleft)
+    game_over=font1.render("Game Over!!!",True,(124,10,2))
+    restart=font2.render("Press 'R' to Restart",True,(0,255,0))
+    game_over_rect=game_over.get_rect(center=screen.get_rect().center)
+    restart_rect=restart.get_rect(midtop=(game_over_rect.centerx,game_over_rect.bottom+10))
+    screen.blit(game_over,game_over_rect.topleft)
+    screen.blit(restart,restart_rect.bottomleft)
     pg.display.update()
+    global current_score
+    current_score=0
+    # print(current_score)
     while True:
         for event in pg.event.get():
             if event.type==pg.QUIT:
@@ -56,7 +61,16 @@ def game_over_screen(screen):
             if event.type==pg.KEYDOWN and event.key==pg.K_r:
                 enemies.clear()
                 bullets.clear()
+                score(screen)
                 return
+
+
+def score(screen):
+    font=pg.font.Font(None,20)
+    score=font.render(f'Score: {current_score}',True,(0,255,255))
+    place_score=score.get_rect(topright=screen.get_rect().topleft)
+    screen.blit(score,(place_score.x+60,place_score.y+5))
+    pg.display.update()
 
 running=True
 
@@ -103,6 +117,7 @@ while running:
             if collisionDetection(bullet,enemy):
                 bullets.remove(bullet)
                 enemies.remove(enemy)
+                current_score+=1
                 break 
     
     # remove out of screen enemies from list
@@ -118,6 +133,8 @@ while running:
     # screen color
     screen.fill((0,0,0))
 
+    
+
     # draw dead zone
     pg.draw.rect(screen,(124,10,2),danger_zone)
 
@@ -131,6 +148,8 @@ while running:
     # draw enemy
     for enemy in enemies:
         pg.draw.rect(screen,(100,100,100),enemy)
+    
+    score(screen)
 
     # update the screen
     pg.display.flip()
